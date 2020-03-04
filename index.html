@@ -95,26 +95,37 @@
     ng-class="
     {'is-invalid': !userForm.password.$valid && (!userForm.password.$pristine || userForm.$submitted),
     'is-valid': userForm.password.$valid && (!userForm.password.$pristine || userForm.$submitted)}"
-    ng-pattern="/^(?!.*([A-Za-z0-9])\1{1})(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/">
+    ng-pattern="/^(((?=.*[a-z])(?=.*[A-Z]))|((?=.*[a-z])(?=.*[0-9]))|((?=.*[A-Z])(?=.*[0-9])))(?=.{8,})/">
     <div ng-if="!userForm.password.$pristine || userForm.$submitted">
       <span class="error" ng-show="userForm.password.$error.required">Password is required</span>
       <span class="error" ng-show="userForm.password.$error.minlength">Password contain minimum 8 characters</span> 
       <span class="error" ng-show="userForm.password.$error.maxlength">Password contain maximum 15 characters</span>
-      <span class="error" ng-show="userForm.password.$error.pattern">Password contain at least 1 UpperCase,1 LowerCase, 1 Special Chars and 1 Numeric value</span> 
+      <span class="error" ng-show="userForm.password.$error.pattern">Password contain at least 1 UpperCase,1 LowerCase,
+         1 Special Chars and 1 Numeric value</span> 
     </div>
   </div>
 
   <div class="form-group">
     <label for="file">Image: </label>
     <input type="file" class="form-control-file" id="file" name="file" ng-model="userData.file"
-    ng-change="fileChange()">
+    ng-class="
+    {'is-invalid': !userForm.file.$valid && (!userForm.file.$pristine || userForm.$submitted),
+    'is-valid': userForm.file.$valid && (!userForm.file.$pristine || userForm.$submitted)}"
+    ng-required="true" extension>
+     <div ng-if="!userForm.file.$pristine || userForm.$submitted">
+      <span class="error" ng-show="userForm.file.$error.required">File is required</span>
+      <span class="error" ng-show="userForm.file.$error.extension">File Type Must be 'jpg, png, gif'</span> 
+      <span class="error" ng-show="userForm.file.$error.validsize">File size should not greater than 300Kb</span>
+    </div>
+    <pre>{{userForm.file.$error | json}}</pre>
+    <pre>{{userForm.$valid | json}}</pre>
   </div>
 
   <div class="form-check">
     <input type="checkbox" class="form-check-input" id="remember">
     <label class="form-check-label" for="remember">Remember me</label>
   </div>
-  <!-- <pre>{{userForm | json}}</pre> -->
+  <pre>{{userData | json}}</pre>
   <button type="submit" class="btn btn-primary">Submit</button>
 </form>
     
