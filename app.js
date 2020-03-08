@@ -2,7 +2,17 @@ var myApp = angular.module('myApp', []);
 
 myApp.controller("MainController", function ($scope, $http) {
     $scope.greeting = "Form Validation by AngularJs";
-    $scope.userData = {};
+
+    $http({
+        method: 'GET',
+        url: 'http://localhost/angularjs-practice/backend/api/user/read.php'
+      }).then(function successCallback(response) {
+          $scope.userData = response.data.data;
+          console.log($scope.userData);
+        }, function errorCallback(response) {
+          
+        });
+
     $scope.submitData = function (valid) {
 
         if(valid){
