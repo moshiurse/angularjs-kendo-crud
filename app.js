@@ -54,10 +54,10 @@ myApp.directive('extension', function (){
                         ngModel.$render();
                         scope.userForm.file.$error.validsize = false;
                         scope.userForm.file.$error.extension = false;
-                        delete scope.userForm.file.$error.validsize;
-                        delete scope.userForm.file.$error.extension;
-                        scope.userForm.file.$valid = true;
-                        scope.userForm.file.$invalid = false;
+                        // delete scope.userForm.file.$error.validsize;
+                        // delete scope.userForm.file.$error.extension;
+                        // scope.userForm.file.$valid = true;
+                        // scope.userForm.file.$invalid = false;
                         scope.$apply();
                         return true;
                    }

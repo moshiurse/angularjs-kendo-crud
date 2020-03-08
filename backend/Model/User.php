@@ -1,44 +1,153 @@
 <?php 
 
-include_once('../db/db_connect.php');
-
 class User {
+// create db con
+    private $con;
+    // initialize table name
+    private $table = 'user';
 
-    public $con;
-    function __construct(\PDO $pdo)
+    // Initialize users properties
+    public $user_id;
+    public $name;
+    public $username;
+    public $email;
+    public $address;
+    public $image;
+    public $mobile;
+    public $password;
+    public $created_at;
+
+    function __construct($db)
     {
-        $this->con = $pdo;
+        $this->con = $db;
     }
 
-    function createUser($user_data){
-        $query = "INSERT INTO `user` (`name`, `email`, `mobile`, `address`, `username`, `password`, `image`) VALUES 
-        ($user_data->name, $user_data->email, $user_data->mobile, $user_data->address, $user_data->username, $user_data->password, $user_data->file)";
+    // Create an User
+    function createUser(){ 
 
-        $this->con->exec($query);
+        $query = 'INSERT INTO '. $this->table . 
+        ' SET 
+            `name` = :name,
+            mobile = :mobile,
+            address = :address,
+            email = :email,
+            username = :username,
+            password = :password,
+            image = :image ';
+
+        $stmt = $this->con->prepare($query);
+        // cleaning data
+        $this->name = $this->name;
+        $this->mobile = $this->mobile;
+        $this->address = $this->address;
+        $this->email = $this->email;
+        $this->username = $this->username;
+        $this->password = $this->password;
+        $this->image = $this->image;
+
+        $stmt->bindParam(':name', $this->name);
+        $stmt->bindParam(':mobile', $this->mobile);
+        $stmt->bindParam(':address', $this->address);
+        $stmt->bindParam(':email', $this->email);
+        $stmt->bindParam(':username', $this->username);
+        $stmt->bindParam(':password', $this->password);
+        $stmt->bindParam(':image', $this->image);
+
+        if($stmt->execute()){
+            return true;
+        }
+
+        printf("Error: %s.\n", $stmt->error);
+        return false;
     }
 
+    // Update existing User Data
+    function updateUser(){ 
+
+        $query = 'UPDATE '. $this->table . 
+        ' SET 
+            `name` = :name,
+            mobile = :mobile,
+            address = :address,
+            email = :email,
+            username = :username,
+            password = :password,
+            image = :image
+            WHERE user_id = :user_id';
+
+        $stmt = $this->con->prepare($query);
+        // cleaning data
+        $this->name = $this->name;
+        $this->mobile = $this->mobile;
+        $this->address = $this->address;
+        $this->email = $this->email;
+        $this->username = $this->username;
+        $this->password = $this->password;
+        $this->image = $this->image;
+        $this->user_id = $this->user_id;
+
+        $stmt->bindParam(':name', $this->name);
+        $stmt->bindParam(':mobile', $this->mobile);
+        $stmt->bindParam(':address', $this->address);
+        $stmt->bindParam(':email', $this->email);
+        $stmt->bindParam(':username', $this->username);
+        $stmt->bindParam(':password', $this->password);
+        $stmt->bindParam(':image', $this->image);
+        $stmt->bindParam(':user_id', $this->user_id);
+
+        if($stmt->execute()){
+            return true;
+        }
+
+        printf("Error: %s.\n", $stmt->error);
+        return false;
+    }
+
+    // get All user Data
     function getAllUser(){
 
         $query = "select * from user";
-        $stmt = $this->con->query($query);
-        $stmt->fetch(PDO::FETCH_ASSOC);
+        $stmt = $this->con->prepare($query);
+        $stmt->execute();
+        return $stmt;
     }
 
-    function deleteUser($user_id){
-        $query = "delete from user where user_id:$user_id";
-        $this->con->exec($query);
+    // get single user
+    function getUser(){
+        $query = "select * from user
+        where user_id = ?";
+        $stmt = $this->con->prepare($query);
+        $stmt->bindParam(1, $this->user_id);
+        $stmt->execute();
+
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        $this->name = $row['name'];
+        $this->email = $row['email'];
+        $this->mobile = $row['mobile'];
+        $this->address = $row['address'];
+        $this->username = $row['username'];
+        $this->password = $row['password'];
+        $this->image = $row['image'];
+
     }
 
-    function updateUser($user_data, $user_id){
-       $query = "UPDATE user SET name = $user_data->name, email = $user_data->email, mobile = $user_data->mobile,
-       address = $user_data->address, username = $user_data->username, password = $user_data->password, file = $user_data->file
-       WHERE user_id = $user_id";
-       
-       $this->con->exec($query);
+    function deleteUser(){
+        $query = 'DELETE FROM ' .$this->table . ' where user_id = :user_id';
+        $stmt = $this->con->prepare($query);
+
+        $this->user_id = $this->user_id;
+
+        $stmt->bindParam(':user_id', $this->user_id);
+
+        if($stmt->execute()){
+            return true;
+        }
+
+        printf("Error: %s.\n", $stmt->error);
+        return false;
     }
 
 }
 
 ?>
-
-<!-- INSERT INTO `user` (`user_id`, `name`, `email`, `mobile`, `address`, `username`, `password`, `image`, `created_at`) VALUES (NULL, 'Moshiur Rahman', 'moshiur.swe@gmail.com', '01999999999', 'Mymensingh, Bangladesh', 'moshiurse', '11AAa@111', 'moshiur.png', current_timestamp()) -->
