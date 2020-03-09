@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Form Validation by AngularJs and kendo</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.3.0/css/font-awesome.css" integrity="sha256-w3TvulQnlih5PwThDr9dDBtNvDaz9BMtkjXwHWTKXI4=" crossorigin="anonymous" />
     <link href="app.css" rel="stylesheet"/>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.7.8/angular.min.js" integrity="sha256-23hi0Ag650tclABdGCdMNSjxvikytyQ44vYGo9HyOrU=" crossorigin="anonymous"></script>
     <script src="app.js"></script>
@@ -16,7 +17,9 @@
 <div class="row">
   <div class="col-md-6">
 
-    <form name="userForm" method="POST" ng-submit="submitData(userForm.$valid)" novalidate="novalidate">
+    <form name="userForm" method="POST" ng-submit="submitData()" novalidate="novalidate">
+        <input type="text" class="form-control" id="user_id" name="user_id" ng-model="userData.user_id" hidden="true">
+      
       <div class="form-group" ng-class="{'has-error': true}">
           <label for="name">Name: </label>
           <input type="text" class="form-control" name="name" id="name" ng-required="true" 
@@ -129,6 +132,7 @@
         </div>
         <pre>{{userData | json}}</pre>
         <button type="submit" class="btn btn-primary">Submit</button>
+        <button type="reset" ng-click="resetUser()" class="btn btn-primary">Reset</button>
       </form>
 
   </div>
@@ -141,6 +145,7 @@
     <thead>
       <tr>
         <th scope="col">#</th>
+        <th hidden>Id</th>
         <th scope="col">Name</th>
         <th scope="col">User Name</th>
         <th scope="col">Email</th>
@@ -150,18 +155,24 @@
     </thead>
     <tbody>
 
-      <div ng-if="userData.length < 1">
+      <div ng-if="userDatas.length < 1">
         No User found
       </div>
 
-      <tr ng-repeat="users in userData">
+      <tr ng-repeat="users in userDatas">
         <th scope="row">{{$index+1}}</th>
+        <th hidden>{{users.user_id}}</th>
         <td>{{users.name}}</td>
         <td>{{users.username}}</td>
         <td>{{users.email}}</td>
         <td>{{users.mobile}}</td>
-        <td>Action</td>
+        <td>
+          <a href="#" ng-click="editUser(users)"><i class="fa fa-lg fa-pencil-square-o" style="color:darkblue;" aria-hidden="true"></i></a>
+          <a href="#" ng-click="deleteUser(users.user_id)"><i class="fa fa-lg fa-trash-o" style="color:darkred;" aria-hidden="true"></i></a>
+          </td>
       </tr>
+
+      <h2 class="bg-success">{{msg}}</h2>
       <!-- <tr>
         <th scope="row">2</th>
         <td>Jacob</td>
