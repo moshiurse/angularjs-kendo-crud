@@ -1,4 +1,4 @@
-var myApp = angular.module('myApp', []);
+var myApp = angular.module('myApp', ['kendo.directives']);
 
 myApp.controller("MainController", function ($scope, $http) {
     $scope.greeting = "Form Validation by AngularJs";
@@ -11,6 +11,7 @@ myApp.controller("MainController", function ($scope, $http) {
     $scope.isErrorUsername = true;
     $scope.isErrorEmail = true;
     
+    var user = [];
     // Show Users list using api
     $scope.showUsers = function () {
         
@@ -22,6 +23,7 @@ myApp.controller("MainController", function ($scope, $http) {
                 $scope.msg = "No User Found!!";
             }else{
                 $scope.userDatas = response.data;
+                user = response.data;
             }
         }, function errorCallback(response) {
             
@@ -119,6 +121,11 @@ myApp.controller("MainController", function ($scope, $http) {
                 data: {username: $scope.userData.username}
               }).then(function successCallback(response) {
                 $scope.isErrorUsername = response.data.error; //set valid/invalid boolean
+                if($scope.isErrorUsername){
+                    $scope.userForm.username.$valid = false;
+                }else{
+                    $scope.userForm.username.$valid = true;
+                }
                 $scope.usercheck = response.data.msg; //set msg
                 }, function errorCallback(response) {
                     $scope.msg = response.data.msg;
@@ -138,6 +145,11 @@ myApp.controller("MainController", function ($scope, $http) {
                 data: {email: $scope.userData.email}
               }).then(function successCallback(response) {
                 $scope.isErrorEmail = response.data.error; //set valid/invalid boolean
+                if($scope.isErrorEmail){
+                    $scope.email.username.$valid = false;
+                }else{
+                    $scope.email.username.$valid = true;
+                }
                 $scope.emailcheck = response.data.msg; //set msg
                 $scope.showUsers();
                 }, function errorCallback(response) {
@@ -151,6 +163,46 @@ myApp.controller("MainController", function ($scope, $http) {
 
     $scope.fileChange = function () {
         alert("File");
+    };
+
+    $scope.mainGridOptions = {
+        dataSource: {
+            
+            transport: {
+                read: "http://localhost/angularjs-practice/backend/api/user/read.php",
+                type: "json"
+            },
+                
+            pageSize: 10,
+            serverPaging: true,
+            serverSorting: true
+        },
+        sortable: true,
+        pageable: true,
+        
+        columns: [{
+            field: "name",
+            title: "Name",
+            width: "20%"
+            },{
+            field: "username",
+            title: "User Name",
+            width: "15%"
+            },{
+            field: "email",
+            width: "20%"
+            },{
+            field: "mobile",
+            width: "15%"
+            },{
+            field: "address",
+            width: "20%"
+        },
+        {
+            title: "Action",
+            width: "15%"
+            // template: '<a href="#" ng-click="editUser(users)"><i class="fa fa-lg fa-pencil-square-o" style="color:darkblue;" aria-hidden="true"></i></a><a href="#" ng-click="deleteUser(users.user_id)"><i class="fa fa-lg fa-trash-o" style="color:darkred;" aria-hidden="true"></i></a>'
+        }]
     };
     
 })
