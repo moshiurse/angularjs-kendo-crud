@@ -17,28 +17,24 @@ $db = $database->connect();
 //intantiate User Object
 $user = new User($db);
 
-// Get the raw Users Data
 $data = json_decode(file_get_contents("php://input"));
 
 // Set the data
-$user->name = $data->name;
-$user->mobile = $data->mobile;
-$user->address = $data->address;
-$user->email = $data->email;
 $user->username = $data->username;
-$user->password = $data->password;
-// $user->image = $data->image;
 
-if($user->createUser()){
-    echo json_encode(
-        array(
-            'msg' => 'User created successfully!!'
-        )
-        );
+//get users query
+$result = $user->usernameExists();
+//Get row count
+// $num = $result->rowCount();
+
+if($result > 0){
+    echo json_encode 
+    (
+        array("msg" => "Username is not available", "error" => true)
+    );
 }else{
-    echo json_encode(
-        array(
-            'msg' => 'User failed to create!!'
-        )
-        );
+    echo json_encode 
+    (
+        array("msg" => "Username is available", "error" => false)
+    );
 }

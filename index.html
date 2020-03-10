@@ -39,20 +39,22 @@
         <div class="form-group">
           <label for="email">Email: </label>
           <input type="text" class="form-control" id="email" name="email" placeholder="Enter Email" ng-model="userData.email"
-          ng-required="true" ng-pattern="/^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/"
+          ng-required="true" ng-pattern="/^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/" ng-blur="emailExists()"
           ng-class="
           {'is-invalid': !userForm.email.$valid && (!userForm.email.$pristine || userForm.$submitted),
           'is-valid': userForm.email.$valid && (!userForm.email.$pristine || userForm.$submitted)}
           ">
           <div ng-if="!userForm.email.$pristine || userForm.$submitted">
             <span class="error" ng-show="userForm.email.$error.required">Email is required</span>
-            <span class="error" ng-show="userForm.email.$error.pattern">Email Must be a valid email<</span> 
+            <span class="error" ng-show="userForm.email.$error.pattern">Email Must be a valid email</span> 
+            <span ng-class="{'error' : isErrorEmail, 'no-error': !isErrorEmail}" ng-show="emailcheck">{{emailcheck}}</span> 
           </div>
         </div>
       
         <div class="form-group">
           <label for="username">User Name: </label>
-          <input type="text" class="form-control" id="username" name="username" placeholder="Enter User Name" ng-model="userData.username"
+          <input type="text" class="form-control" id="username" name="username" placeholder="Enter User Name"
+           ng-model="userData.username" ng-blur="usernameExists()"
           ng-class="
           {'is-invalid': !userForm.username.$valid && (!userForm.username.$pristine || userForm.$submitted),
           'is-valid': userForm.username.$valid && (!userForm.username.$pristine || userForm.$submitted)}"
@@ -62,7 +64,8 @@
             <span class="error" ng-show="userForm.username.$error.required">User Name is required</span>
             <span class="error" ng-show="userForm.username.$error.minlength">User Name Must be 6-8 characters</span>
             <span class="error" ng-show="userForm.username.$error.maxlength">User Name Must be 6-8 characters</span>
-            <span class="error" ng-show="userForm.username.$error.pattern">Username should not contain any special character </span> 
+            <span class="error" ng-show="userForm.username.$error.pattern">Username should not contain any special character </span>
+            <span ng-class="{'error' : isErrorUsername, 'no-error': !isErrorUsername}" ng-show="usercheck">{{usercheck}}</span>  
           </div>
         </div>
       

@@ -17,40 +17,42 @@ $user = new User($db);
 
 //get users query
 $result = $user->getAllUser();
+$result->setFetchMode(PDO::FETCH_ASSOC);
 
 //Get row count
 $num = $result->rowCount();
-
+$data = $result->fetchAll();
+echo json_encode($data);
 //check if any user exists
-if($num > 0){
-    $users_arr = array();
+// if($num > 0){
+//     $users_arr = array();
 
-    $users_arr['data'] = array();
+//     $users_arr['data'] = ;
 
-    while($row = $result->fetch(PDO::FETCH_ASSOC)){
-        extract($row);
+//     // while($row = $result->fetch(PDO::FETCH_ASSOC)){
+//     //     extract($row);
 
-        $user_item = array(
-            'user_id' => $user_id,
-            'name' => $name,
-            'email' => $email,
-            'mobile' => $mobile,
-            'address' => $address,
-            'username' => $username,
-            'password' => $password,
-            'image' => $image,
-            'created_at'=> $created_at
-        );
+//     //     $user_item = array(
+//     //         'user_id' => $user_id,
+//     //         'name' => $name,
+//     //         'email' => $email,
+//     //         'mobile' => $mobile,
+//     //         'address' => $address,
+//     //         'username' => $username,
+//     //         'password' => $password,
+//     //         'image' => $image,
+//     //         'created_at'=> $created_at
+//     //     );
 
-        array_push($users_arr['data'], $user_item);
-    }
+//     //     array_push($users_arr['data'], $user_item);
+//     // }
 
-    // convert array to json
-    echo json_encode($users_arr);
+//     // convert array to json
+//     echo json_encode($users_arr);
 
-}else{
-    // No user found
-    echo json_encode(
-        array('msg' => 'No User Found!!')
-    );
-}
+// }else{
+//     // No user found
+//     echo json_encode(
+//         array('msg' => 'No User Found!!')
+//     );
+// }

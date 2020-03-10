@@ -32,9 +32,8 @@ class User {
             address = :address,
             email = :email,
             username = :username,
-            password = :password,
-            image = :image ';
-
+            password = :password';
+// image = :image
         $stmt = $this->con->prepare($query);
         // cleaning data
         $this->name = $this->name;
@@ -43,7 +42,7 @@ class User {
         $this->email = $this->email;
         $this->username = $this->username;
         $this->password = $this->password;
-        $this->image = $this->image;
+        // $this->image = $this->image;
 
         $stmt->bindParam(':name', $this->name);
         $stmt->bindParam(':mobile', $this->mobile);
@@ -51,13 +50,13 @@ class User {
         $stmt->bindParam(':email', $this->email);
         $stmt->bindParam(':username', $this->username);
         $stmt->bindParam(':password', $this->password);
-        $stmt->bindParam(':image', $this->image);
+        // $stmt->bindParam(':image', $this->image);
 
         if($stmt->execute()){
             return true;
         }
 
-        printf("Error: %s.\n", $stmt->error);
+        //printf("Error: %s.\n", $stmt->error);
         return false;
     }
 
@@ -146,6 +145,26 @@ class User {
 
         printf("Error: %s.\n", $stmt->error);
         return false;
+    }
+
+    function usernameExists(){
+        $query = "select username from user
+        where username = :username";
+        $stmt = $this->con->prepare($query);
+        $stmt->bindParam(":username", $this->username);
+        $stmt->execute();
+        $result = $stmt->rowCount();
+        return $result;
+    }
+
+    function emailExists(){
+        $query = "select email from user
+        where email = :email";
+        $stmt = $this->con->prepare($query);
+        $stmt->bindParam(":email", $this->email);
+        $stmt->execute();
+        $result = $stmt->rowCount();
+        return $result;
     }
 
 }

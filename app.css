@@ -2,3 +2,8 @@
     color: red;
     display: block;
 }
+
+.no-error{
+    color: green;
+    display: block;
+}

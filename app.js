@@ -3,6 +3,10 @@ var myApp = angular.module('myApp', []);
 myApp.controller("MainController", function ($scope, $http) {
     $scope.greeting = "Form Validation by AngularJs";
     $scope.msg = "";
+    $scope.usercheck = "";
+    $scope.emailcheck = "";
+    $scope.isErrorUsername = true;
+    $scope.isErrorEmail = true;
     // $scope.userData.name = "Hello";
     
     $scope.showUsers = function () {
@@ -94,6 +98,44 @@ myApp.controller("MainController", function ($scope, $http) {
     $scope.resetUser = function (user) {
         $scope.userData = {};
         $scope.$applyAsync();
+    }
+
+    $scope.usernameExists = function(){
+        if($scope.userForm.username.$valid){
+            $http({
+                method: 'POST',
+                url: 'http://localhost/angularjs-practice/backend/api/user/unameavail.php',
+                data: {username: $scope.userData.username}
+              }).then(function successCallback(response) {
+                $scope.isErrorUsername = response.data.error;
+                $scope.usercheck = response.data.msg;
+                $scope.showUsers();
+                }, function errorCallback(response) {
+                    $scope.msg = response.data.msg;
+                });
+        }else{
+            $scope.usercheck = "";
+        }
+        
+    }
+
+    $scope.emailExists = function(){
+        if($scope.userForm.email.$valid){
+            $http({
+                method: 'POST',
+                url: 'http://localhost/angularjs-practice/backend/api/user/emailavail.php',
+                data: {email: $scope.userData.email}
+              }).then(function successCallback(response) {
+                $scope.isErrorEmail = response.data.error;
+                $scope.emailcheck = response.data.msg;
+                $scope.showUsers();
+                }, function errorCallback(response) {
+                    $scope.msg = response.data.msg;
+                });
+        }{
+            $scope.emailcheck = "";
+        }
+        
     }
 
     $scope.fileChange = function () {
