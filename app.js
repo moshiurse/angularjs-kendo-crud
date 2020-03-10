@@ -3,12 +3,15 @@ var myApp = angular.module('myApp', []);
 myApp.controller("MainController", function ($scope, $http) {
     $scope.greeting = "Form Validation by AngularJs";
     $scope.msg = "";
+
+    // Error msg for email and username
     $scope.usercheck = "";
     $scope.emailcheck = "";
+    // valid or invalid check for email and username
     $scope.isErrorUsername = true;
     $scope.isErrorEmail = true;
-    // $scope.userData.name = "Hello";
     
+    // Show Users list using api
     $scope.showUsers = function () {
         
         $http({
@@ -26,9 +29,10 @@ myApp.controller("MainController", function ($scope, $http) {
 
     };
 
+    // Called showUser for always showing users list
     $scope.showUsers();
     
-
+    // Form submit functiom
     $scope.submitData = function () {
         
 
@@ -38,31 +42,33 @@ myApp.controller("MainController", function ($scope, $http) {
         //     console.log("Form is not valid!");  
         //     console.log($scope.userData);  
         // }
-        alert($scope.userData.user_id)
 
+        // Check for either insert or update
         if($scope.userData.user_id){
             $scope.updateUser($scope.userData);
         }else{
             $scope.insertUser($scope.userData);
         }
-
+        // Update user data after insert or update
         $scope.showUsers();
 
     };
 
+    // insert Function using rest api
     $scope.insertUser = function(user){
         $http({
             method: 'POST',
             url: 'http://localhost/angularjs-practice/backend/api/user/create.php',
             data: user
           }).then(function successCallback(response) {
-            $scope.userData = {};
-            $scope.msg = response.data.msg;
+            $scope.userData = {};//after insert clear the scope
+            $scope.msg = response.data.msg; //showing msg
             }, function errorCallback(response) {
-                $scope.msg = "User Failed to create";
+                $scope.msg = "User Failed to create"; //display error msg
             });
     };
 
+        // update Function using rest api
     $scope.updateUser = function(user){
         $http({
             method: 'PUT',
@@ -71,12 +77,13 @@ myApp.controller("MainController", function ($scope, $http) {
           }).then(function successCallback(response) {
             $scope.msg = response.data.msg;
             $scope.userData = {};
-            $scope.userData.user_id = '';
+            // $scope.userData.user_id = '';
             }, function errorCallback(response) {
                 $scope.msg = "User Failed to update";
             });
     };
 
+    // delete function for delete user
     $scope.deleteUser = function(id){
         $http({
             method: 'DELETE',
@@ -85,40 +92,44 @@ myApp.controller("MainController", function ($scope, $http) {
             data: {user_id: id}
           }).then(function successCallback(response) {
             $scope.msg = response.data.msg;
-            $scope.showUsers();
+            $scope.showUsers(); //update user data after delete
             }, function errorCallback(response) {
                 $scope.msg = response.data.msg;
             });
     };
 
+    // edit button action
     $scope.editUser = function (user) {
-        $scope.userData = user;
+        $scope.userData = user; // set the value of all input to selected user
     }
 
+    // reset the form
     $scope.resetUser = function (user) {
         $scope.userData = {};
         $scope.$applyAsync();
     }
 
+    // check if username exists or not using api
     $scope.usernameExists = function(){
+        // check if input field valid
         if($scope.userForm.username.$valid){
             $http({
                 method: 'POST',
                 url: 'http://localhost/angularjs-practice/backend/api/user/unameavail.php',
                 data: {username: $scope.userData.username}
               }).then(function successCallback(response) {
-                $scope.isErrorUsername = response.data.error;
-                $scope.usercheck = response.data.msg;
-                $scope.showUsers();
+                $scope.isErrorUsername = response.data.error; //set valid/invalid boolean
+                $scope.usercheck = response.data.msg; //set msg
                 }, function errorCallback(response) {
                     $scope.msg = response.data.msg;
                 });
         }else{
-            $scope.usercheck = "";
+            $scope.usercheck = ""; // if invalid then set msg ""
         }
         
     }
 
+    // Check if email exists or not using api
     $scope.emailExists = function(){
         if($scope.userForm.email.$valid){
             $http({
@@ -126,14 +137,14 @@ myApp.controller("MainController", function ($scope, $http) {
                 url: 'http://localhost/angularjs-practice/backend/api/user/emailavail.php',
                 data: {email: $scope.userData.email}
               }).then(function successCallback(response) {
-                $scope.isErrorEmail = response.data.error;
-                $scope.emailcheck = response.data.msg;
+                $scope.isErrorEmail = response.data.error; //set valid/invalid boolean
+                $scope.emailcheck = response.data.msg; //set msg
                 $scope.showUsers();
                 }, function errorCallback(response) {
                     $scope.msg = response.data.msg;
                 });
         }{
-            $scope.emailcheck = "";
+            $scope.emailcheck = "";// if invalid then set msg ""
         }
         
     }
