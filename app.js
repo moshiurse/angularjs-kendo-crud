@@ -3,7 +3,7 @@ var myApp = angular.module('myApp', ['kendo.directives']);
 myApp.controller("MainController", function ($scope, $http) {
     $scope.greeting = "Form Validation by AngularJs";
     $scope.msg = "";
-
+    $scope.record = 0;
     // Error msg for email and username
     $scope.usercheck = "";
     $scope.emailcheck = "";
@@ -180,7 +180,8 @@ myApp.controller("MainController", function ($scope, $http) {
         sortable: true,
         pageable: true,
         
-        columns: [{
+        columns: [
+          {
             field: "name",
             title: "Name",
             width: "20%"
@@ -200,8 +201,11 @@ myApp.controller("MainController", function ($scope, $http) {
         },
         {
             title: "Action",
-            width: "15%"
-            // template: '<a href="#" ng-click="editUser(users)"><i class="fa fa-lg fa-pencil-square-o" style="color:darkblue;" aria-hidden="true"></i></a><a href="#" ng-click="deleteUser(users.user_id)"><i class="fa fa-lg fa-trash-o" style="color:darkred;" aria-hidden="true"></i></a>'
+            width: "15%",
+            template: function(dataItem) {
+                return '<a href="#" ng-click="editUser(dataItem)"><i class="fa fa-lg fa-pencil-square-o" style="color:darkblue;" aria-hidden="true"></i></a>&nbsp;&nbsp;<a href="#" ng-click="deleteUser(dataItem.user_id)"><i class="fa fa-lg fa-trash-o" style="color:darkred;" aria-hidden="true"></i></a>';
+              }
+            // template: 
         }]
     };
     
