@@ -1,4 +1,4 @@
-var myApp = angular.module('myApp', ['kendo.directives']);
+var myApp = angular.module('myApp', ['kendo.directives', 'toaster']);
 
 myApp.controller("MainController", function ($scope, $http) {
     $scope.greeting = "Form Validation by AngularJs";
@@ -10,30 +10,12 @@ myApp.controller("MainController", function ($scope, $http) {
     // valid or invalid check for email and username
     $scope.isErrorUsername = true;
     $scope.isErrorEmail = true;
-    
-    var user = [];
-    // Show Users list using api
-    $scope.showUsers = function () {
-        
-        $http({
-            method: 'GET',
-            url: 'http://localhost/angularjs-practice/backend/api/user/read.php'
-        }).then(function successCallback(response) {
-            if(response.data.length <1){
-                $scope.msg = "No User Found!!";
-            }else{
-                $scope.userDatas = response.data;
-                user = response.data;
-            }
-        }, function errorCallback(response) {
-            
-        });
 
-    };
-
-    // Called showUser for always showing users list
-    $scope.showUsers();
-    
+    // ACTIONS FOR ALERT
+    $scope.actions = [
+        { text: 'YES' },
+        { text: 'NO',primary: true }
+    ];
     // Form submit functiom
     $scope.submitData = function () {
         
@@ -52,7 +34,8 @@ myApp.controller("MainController", function ($scope, $http) {
             $scope.insertUser($scope.userData);
         }
         // Update user data after insert or update
-        $scope.showUsers();
+        count = 0;
+        $("#mainGridOptions").data("kendoGrid").dataSource.read();
 
     };
 
@@ -65,6 +48,7 @@ myApp.controller("MainController", function ($scope, $http) {
           }).then(function successCallback(response) {
             $scope.userData = {};//after insert clear the scope
             $scope.msg = response.data.msg; //showing msg
+            $scope.userForm.$setPrestine = true;
             }, function errorCallback(response) {
                 $scope.msg = "User Failed to create"; //display error msg
             });
@@ -87,17 +71,23 @@ myApp.controller("MainController", function ($scope, $http) {
 
     // delete function for delete user
     $scope.deleteUser = function(id){
-        $http({
-            method: 'DELETE',
 
-            url: 'http://localhost/angularjs-practice/backend/api/user/delete.php',
-            data: {user_id: id}
-          }).then(function successCallback(response) {
-            $scope.msg = response.data.msg;
-            $scope.showUsers(); //update user data after delete
-            }, function errorCallback(response) {
+        kendo.confirm("Are you sure that you want to proceed?").then(function () {
+            $http({
+                method: 'DELETE',
+                url: 'http://localhost/angularjs-practice/backend/api/user/delete.php',
+                data: {user_id: id}
+              }).then(function successCallback(response) {
                 $scope.msg = response.data.msg;
-            });
+                toaster.success({title: "User Deleted", body:"User Deleted Successfully!!"});
+                count = 0;
+                $("#mainGridOptions").data("kendoGrid").dataSource.read();
+                }, function errorCallback(response) {
+                    $scope.msg = response.data.msg;
+                });
+        }, function () {
+            kendo.alert("User not Deleted.");
+        });
     };
 
     // edit button action
@@ -151,12 +141,11 @@ myApp.controller("MainController", function ($scope, $http) {
                     $scope.email.username.$valid = true;
                 }
                 $scope.emailcheck = response.data.msg; //set msg
-                $scope.showUsers();
                 }, function errorCallback(response) {
                     $scope.msg = response.data.msg;
                 });
         }{
-            $scope.emailcheck = "";// if invalid then set msg ""
+            $scope.emailcheck = "";// if invalid then set msg 
         }
         
     }
@@ -165,37 +154,58 @@ myApp.controller("MainController", function ($scope, $http) {
         alert("File");
     };
 
+    // global count variable for counting row in grid
+    var count = 0;
+    // KendoGrid properties
     $scope.mainGridOptions = {
         dataSource: {
-            
+            type: "json", //datatype we get
             transport: {
-                read: "http://localhost/angularjs-practice/backend/api/user/read.php",
-                type: "json"
+                read: "http://localhost/angularjs-practice/backend/api/user/read.php" //url source for data 
             },
-                
-            pageSize: 10,
+            schema: {
+                total: function(response) {
+                    return response.total; // Get Total Data
+                  },
+                data: function(response) {
+                  return response.data; // Get the grid data
+                }
+              }, 
+            pageSize: 50, //row we want to show in one page
             serverPaging: true,
             serverSorting: true
         },
-        sortable: true,
+        sortable: true, 
         pageable: true,
-        
+        //columns 
         columns: [
-          {
+            {
+            title: "",
+            template: function(dataItem){ //custom template for column data
+                count++;
+                return count;
+            },
+            width: "5%"
+            },
+            {
             field: "name",
             title: "Name",
             width: "20%"
-            },{
+            },
+            {
             field: "username",
             title: "User Name",
             width: "15%"
-            },{
+            },
+            {
             field: "email",
             width: "20%"
-            },{
+            },
+            {
             field: "mobile",
             width: "15%"
-            },{
+            },
+            {
             field: "address",
             width: "20%"
         },
@@ -206,14 +216,16 @@ myApp.controller("MainController", function ($scope, $http) {
                 return '<a href="#" ng-click="editUser(dataItem)"><i class="fa fa-lg fa-pencil-square-o" style="color:darkblue;" aria-hidden="true"></i></a>&nbsp;&nbsp;<a href="#" ng-click="deleteUser(dataItem.user_id)"><i class="fa fa-lg fa-trash-o" style="color:darkred;" aria-hidden="true"></i></a>';
               }
             // template: 
-        }]
+        }],
+        height: 700
     };
     
 })
 
+// Custom directive for validation of file
 myApp.directive('extension', function (){ 
-    var validFormats = ['jpg', 'png', 'gif'];
-    var validSize = 300000;
+    var validFormats = ['jpg', 'png', 'gif']; //format available
+    var validSize = 300000; //highest size to upload data
     return {
        require: 'ngModel',
        link: function(scope, elem, attr, ngModel) {
