@@ -1,4 +1,4 @@
-var myApp = angular.module('myApp', ['kendo.directives', 'toaster']);
+var myApp = angular.module('myApp', ['kendo.directives']);
 
 myApp.controller("MainController", function ($scope, $http) {
     $scope.greeting = "Form Validation by AngularJs";
@@ -10,6 +10,7 @@ myApp.controller("MainController", function ($scope, $http) {
     // valid or invalid check for email and username
     $scope.isErrorUsername = true;
     $scope.isErrorEmail = true;
+
 
     // ACTIONS FOR ALERT
     $scope.actions = [
@@ -117,6 +118,7 @@ myApp.controller("MainController", function ($scope, $http) {
                     $scope.userForm.username.$valid = true;
                 }
                 $scope.usercheck = response.data.msg; //set msg
+                show_success_msg("sUCCESS");
                 }, function errorCallback(response) {
                     $scope.msg = response.data.msg;
                 });
@@ -171,12 +173,14 @@ myApp.controller("MainController", function ($scope, $http) {
                   return response.data; // Get the grid data
                 }
               }, 
-            pageSize: 50, //row we want to show in one page
+            pageSize: 10,
             serverPaging: true,
             serverSorting: true
         },
         sortable: true, 
-        pageable: true,
+        pageable: {
+            refresh: true
+        },
         //columns 
         columns: [
             {
@@ -292,3 +296,33 @@ myApp.directive('extension', function (){
 //        }
 //     };
 //  });
+
+toastr.options = {
+    "closeButton": true,
+    "debug": false,
+    "newestOnTop": false,
+    "progressBar": true,
+    "preventDuplicates": false,
+    "positionClass": "toast-bottom-right",
+    "onclick": null,
+    "showDuration": "100000",
+    "hideDuration": "1000",
+    "timeOut": 5000,
+    "extendedTimeOut": 0,
+    "showEasing": "swing",
+    "hideEasing": "linear",
+    "showMethod": "fadeIn",
+    "hideMethod": "fadeOut",
+    "tapToDismiss": false
+};
+function show_success_msg(msg) {
+    toastr.options.positionClass = "toast-bottom-right";
+    toastr.options.progressBar = true;
+    toastr.options.timeOut = 3000;
+    toastr.success(msg);
+}
+function show_err_msg(msg) {
+    toastr.options.positionClass = "toast-bottom-right";
+    toastr.options.timeOut = 3000;
+    toastr.error(msg);
+}
