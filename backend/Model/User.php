@@ -103,12 +103,18 @@ class User {
     }
 
     // get All user Data
-    function getAllUser(){
-
-        $query = "select * from user";
+    function getAllUser($take, $skip){
+// query for counting total data
+        $countQuery = "select count(*) as count from user";
+        $count_stmt = $this->con->prepare($countQuery);
+        $count_stmt->execute();
+        $count = $count_stmt->fetchColumn(0);
+        // query for paging data
+        $query = "select * from user
+        LIMIT $skip, $take";
         $stmt = $this->con->prepare($query);
         $stmt->execute();
-        return $stmt;
+        return [$count, $stmt];
     }
 
     // get single user

@@ -15,14 +15,23 @@ $db = $database->connect();
 //intantiate User Object
 $user = new User($db);
 
-//get users query
-$result = $user->getAllUser();
-$result->setFetchMode(PDO::FETCH_ASSOC);
 
+//get users query
+
+$take = $_GET['take'];
+$skip = $_GET['skip'];
+
+$result = $user->getAllUser($take,$skip);
+
+$count = $result[0];
+
+$result[1]->setFetchMode(PDO::FETCH_ASSOC);
 //Get row count
-$num = $result->rowCount();
-$data = $result->fetchAll();
-echo json_encode($data);
+$data = $result[1]->fetchAll();
+$allData['total'] = $count;
+$allData['data'] = $data;
+echo json_encode($allData);
+
 //check if any user exists
 // if($num > 0){
 //     $users_arr = array();
