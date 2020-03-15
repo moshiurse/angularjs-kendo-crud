@@ -50,8 +50,11 @@ myApp.controller("MainController", function ($scope, $http) {
             $scope.userData = {};//after insert clear the scope
             $scope.msg = response.data.msg; //showing msg
             $scope.userForm.$setPrestine = true;
+            show_success_msg(response.data.msg);
+            $("#mainGridOptions").data("kendoGrid").dataSource.read();
             }, function errorCallback(response) {
                 $scope.msg = "User Failed to create"; //display error msg
+                show_err_msg($scope.msg);
             });
     };
 
@@ -64,9 +67,12 @@ myApp.controller("MainController", function ($scope, $http) {
           }).then(function successCallback(response) {
             $scope.msg = response.data.msg;
             $scope.userData = {};
+            show_success_msg(response.data.msg);
+            $("#mainGridOptions").data("kendoGrid").dataSource.read();
             // $scope.userData.user_id = '';
             }, function errorCallback(response) {
                 $scope.msg = "User Failed to update";
+                show_err_msg($scope.msg);
             });
     };
 
@@ -80,7 +86,7 @@ myApp.controller("MainController", function ($scope, $http) {
                 data: {user_id: id}
               }).then(function successCallback(response) {
                 $scope.msg = response.data.msg;
-                toaster.success({title: "User Deleted", body:"User Deleted Successfully!!"});
+                show_err_msg(response.data.msg);
                 count = 0;
                 $("#mainGridOptions").data("kendoGrid").dataSource.read();
                 }, function errorCallback(response) {
@@ -118,7 +124,6 @@ myApp.controller("MainController", function ($scope, $http) {
                     $scope.userForm.username.$valid = true;
                 }
                 $scope.usercheck = response.data.msg; //set msg
-                show_success_msg("sUCCESS");
                 }, function errorCallback(response) {
                     $scope.msg = response.data.msg;
                 });
@@ -305,7 +310,7 @@ toastr.options = {
     "preventDuplicates": false,
     "positionClass": "toast-bottom-right",
     "onclick": null,
-    "showDuration": "100000",
+    "showDuration": "5000",
     "hideDuration": "1000",
     "timeOut": 5000,
     "extendedTimeOut": 0,
@@ -318,7 +323,7 @@ toastr.options = {
 function show_success_msg(msg) {
     toastr.options.positionClass = "toast-bottom-right";
     toastr.options.progressBar = true;
-    toastr.options.timeOut = 3000;
+    toastr.options.timeOut = 2000;
     toastr.success(msg);
 }
 function show_err_msg(msg) {
