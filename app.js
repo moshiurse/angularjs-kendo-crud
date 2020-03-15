@@ -1,6 +1,6 @@
 var myApp = angular.module('myApp', ['kendo.directives']);
 
-myApp.controller("MainController", function ($scope, $http) {
+myApp.controller("MainController", function ($scope, $element, $http) {
     $scope.greeting = "Form Validation by AngularJs";
     $scope.msg = "";
     $scope.record = 0;
@@ -11,12 +11,6 @@ myApp.controller("MainController", function ($scope, $http) {
     $scope.isErrorUsername = true;
     $scope.isErrorEmail = true;
 
-
-    // ACTIONS FOR ALERT
-    $scope.actions = [
-        { text: 'YES' },
-        { text: 'NO',primary: true }
-    ];
     // Form submit functiom
     $scope.submitData = function () {
         
@@ -96,10 +90,16 @@ myApp.controller("MainController", function ($scope, $http) {
             kendo.alert("User not Deleted.");
         });
     };
+    $scope.closeUserWindow = function(){
+        var wdw = $("#userWindow").data("kendoWindow"); //get the Window widget's instance
+        wdw.close();
+    }
 
     // edit button action
     $scope.editUser = function (user) {
         $scope.userData = user; // set the value of all input to selected user
+        var wdw = $("#userWindow").data("kendoWindow"); //get the Window widget's instance
+        wdw.open().center();
     }
 
     // reset the form

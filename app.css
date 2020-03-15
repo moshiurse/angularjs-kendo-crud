@@ -19,3 +19,13 @@
     background-color: #e9e9e9;
     color: red;
 }
+
+/* Meterial Css Override */
+button.k-warning{
+    background-color: coral !important;
+}
+
+button.k-danger{
+background-color: #d34750 !important;
+}
+  
