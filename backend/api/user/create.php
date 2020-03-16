@@ -27,7 +27,7 @@ $user->address = $data->address;
 $user->email = $data->email;
 $user->username = $data->username;
 $user->password = $data->password;
-// $user->image = $data->image;
+$user->image = $data->image;
 
 if($user->createUser()){
     echo json_encode(

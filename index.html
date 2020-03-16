@@ -22,13 +22,12 @@
 <h1 class="text-center">{{greeting}}</h1>
 
  <div class="text-left">
-  <kendo-button class="k-primary" ng-click="userWindow.open().center()">Create User</kendo-button>
+  <kendo-button class="k-primary" ng-click="openUserDlg()">Create User</kendo-button>
 </div>
 <div id="userWindow" kendo-window="userWindow" k-title="'Create User'" k-center="true"
     k-width="1000" k-height="800" k-visible="false">
 
-
-            <form name="userForm" method="POST" ng-submit="submitData()" novalidate="novalidate">
+            <form name="userForm" method="POST" ng-submit="submitData()" novalidate="novalidate" enctype="multipart/form-data">
               <input type="text" class="form-control" id="user_id" name="user_id" ng-model="userData.user_id" hidden="true">
             
             <div class="form-group">
@@ -82,7 +81,7 @@
             
               <div class="form-group">
                 <label for="mobile">Mobile: </label>
-                <input kendo-numeric-text-box type="text" class="form-control" id="mobile" name="mobile" placeholder="Enter Mobile Number"
+                <input    qtype="text" class="form-control" id="mobile" name="mobile" placeholder="Enter Mobile Number"
                  ng-model="userData.mobile" ng-required="true"
                 ng-class="
                 {'is-invalid': !userForm.mobile.$valid && (!userForm.mobile.$pristine || userForm.$submitted),
@@ -125,17 +124,15 @@
               </div>
             
               <div class="form-group">
-                <label for="file">Image: </label>
-                <input type="file" class="form-control-file" id="file" name="file" ng-model="userData.file"
-                kendo-upload
-                k-async="{removeUrl: 'remove', autoUpload: false }"
-                k-select="fileChange"
+                <label for="image">Image: </label>
+                <input type="file" class="form-control-file" id="image" name="image" ng-model="userData.image" kendo-upload
                 k-multiple= "false"
-                ng-required="true" extension>
+                k-select="fileChange"
+                ng-required="true" >
                  <div ng-if="!userForm.file.$pristine || userForm.$submitted">
-                  <span class="error" ng-show="userForm.file.$error.required">File is required</span>
+                  <!-- <span class="error" ng-show="userForm.file.$error.required">File is required</span>
                   <span class="error" ng-show="userForm.file.$error.extension">File Type Must be 'jpg, png, gif'</span> 
-                  <span class="error" ng-show="userForm.file.$error.validsize">File size should not greater than 300Kb</span>
+                  <span class="error" ng-show="userForm.file.$error.validsize">File size should not greater than 300Kb</span> -->
                 </div>
                 <pre>{{userForm.file.$error | json}}</pre>
                 <pre>{{userForm.$valid | json}}</pre>

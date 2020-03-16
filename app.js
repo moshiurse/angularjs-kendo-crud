@@ -11,7 +11,7 @@ myApp.controller("MainController", function ($scope, $element, $http) {
     $scope.isErrorUsername = true;
     $scope.isErrorEmail = true;
 
-    // Form submit functiom
+    // Form submit function
     $scope.submitData = function () {
         
 
@@ -33,6 +33,66 @@ myApp.controller("MainController", function ($scope, $element, $http) {
         $("#mainGridOptions").data("kendoGrid").dataSource.read();
 
     };
+
+    // File Upload kendo
+
+    $("#image").kendoUpload({
+        async: {
+            saveUrl: "http://localhost/angularjs-practice/backend/api/user/upload.php",
+            removeUrl: "remove",
+            autoUpload: true
+        },
+        complete: onComplete,
+        remove: onRemove,
+        select: onSelect,
+        success: onSuccess,
+        upload: onUpload,
+        multiple: false,
+        validation: {
+            allowedExtensions: [".jpg", ".png", ".gif"],
+            maxFileSize: 300000
+        }
+    });
+
+    function onSelect(e) {
+        console.log("Select :: " + getFileInfo(e));
+    }
+
+    function onUpload(e) {
+        console.log("uploading............");
+    }
+
+    function onSuccess(e) {
+        console.log("Success (" + e.operation + ") :: " + getFileInfo(e));
+    }
+
+    function onError(e) {
+        console.log("Error (" + e.operation + ") :: " + getFileInfo(e));
+    }
+
+    function onComplete(e) {
+        console.log("Complete");
+    }
+
+    function onRemove(e) {
+        console.log("Remove :: " + getFileInfo(e));
+    }
+
+    function onProgress(e) {
+        console.log("Upload progress :: " + e.percentComplete + "% :: " + getFileInfo(e));
+    }
+
+    function getFileInfo(e) {
+        return $.map(e.files, function(file) {
+            var info = file.name;
+
+            // File size is not available in all browsers
+            if (file.size > 0) {
+                info  += " (" + Math.ceil(file.size / 1024) + " KB)";
+            }
+            return info;
+        }).join(", ");
+    }
 
     // insert Function using rest api
     $scope.insertUser = function(user){
@@ -93,6 +153,12 @@ myApp.controller("MainController", function ($scope, $element, $http) {
     $scope.closeUserWindow = function(){
         var wdw = $("#userWindow").data("kendoWindow"); //get the Window widget's instance
         wdw.close();
+    }
+
+    $scope.openUserDlg = function () {
+        $scope.resetUser();
+        var wdw = $("#userWindow").data("kendoWindow"); //get the Window widget's instance
+        wdw.open().center();
     }
 
     // edit button action
@@ -157,9 +223,10 @@ myApp.controller("MainController", function ($scope, $element, $http) {
         
     }
 
-    $scope.fileChange = function () {
-        alert("File");
-    };
+    // $scope.fileChange = function (e) {
+    //     $scope.userData.image = e.files[0].name;
+    //     console.log($scope.userData.name);
+    // };
 
     // global count variable for counting row in grid
     var count = 0;
@@ -231,55 +298,83 @@ myApp.controller("MainController", function ($scope, $element, $http) {
     
 })
 
-// Custom directive for validation of file
-myApp.directive('extension', function (){ 
-    var validFormats = ['jpg', 'png', 'gif']; //format available
-    var validSize = 300000; //highest size to upload data
-    return {
-       require: 'ngModel',
-       link: function(scope, elem, attr, ngModel) {
-                console.log('attr', attr);
-           ngModel.$validators.extension = function () {
-               elem.on('change', function (file) {
-                   var value = elem.val();
-                //    set view value 
-                // scope.userData.file_name = elem[0].files[0].name;
-                    ngModel.$setViewValue(elem[0].files[0].size);
-                    ngModel.$render();
-                //    ngModel.$render();
-                   var size = elem[0].files[0].size;
-                   var ext = value.substring(value.lastIndexOf('.') + 1).toLowerCase(); 
-                   if(!ngModel.$viewValue){
-                       return  false;
-                   }
-                   else if(validFormats.indexOf(ext) == -1){     
-                    console.log('ext');           
-                        scope.userForm.file.$error.extension = true;
-                        scope.$apply();
-                        return  false;
-                   } else if(size > validSize){ 
-                        delete scope.userForm.file.$error.extension;
-                        scope.userForm.file.$error.validsize = true;
-                        scope.$apply();
-                        return  false;
-                   }else{ 
-                        ngModel.$setViewValue(elem[0].files[0].name);
-                        ngModel.$render();
-                        scope.userForm.file.$error.validsize = false;
-                        scope.userForm.file.$error.extension = false;
-                        delete scope.userForm.file.$error.validsize;
-                        delete scope.userForm.file.$error.extension;
-                        scope.userForm.file.$valid = true;
-                        scope.userForm.file.$invalid = false;
-                        scope.$apply();
-                        return true;
-                   }
-               })
-           }
-       }
+// myApp.directive("fileUpload", function ($parse) {
+//     return {
+//         link: function ($scope, element, attrs) {
+//             element.on('change', function (event) {
+//                 var files = event.target.files;
+//                 $parse(attrs.fileUpload).assign($scope, element[0].files);
+//                 $scope.apply();
+//                 console.log('formdata',formData);
+//             }); 
+//         }
+//     }
+// })
 
-    };
- });
+// $scope.uploadFile = function () {
+//     var formData = new FormData();
+//     angular.forEach($scope.files, function(file){
+//         formData.append('file', file);
+//     });
+
+//     $http.post('upload.php', formData, 
+//     {
+//         transformRequest: angular.identity,
+//         headers: {'Content-Type' : undefined, 'Process-Data': false}
+//     }).success(function(response){
+
+//     })
+// }
+
+// Custom directive for validation of file
+// myApp.directive('extension', function (){ 
+//     var validFormats = ['jpg', 'png', 'gif']; //format available
+//     var validSize = 300000; //highest size to upload data
+//     return {
+//        require: 'ngModel',
+//        link: function(scope, elem, attr, ngModel) {
+//                 console.log('attr', attr);
+//            ngModel.$validators.extension = function () {
+//                elem.on('change', function (file) {
+//                    var value = elem.val();
+//                 //    set view value 
+//                 // scope.userData.file_name = elem[0].files[0].name;
+//                     ngModel.$setViewValue(elem[0].files[0].size);
+//                     ngModel.$render();
+//                 //    ngModel.$render();
+//                    var size = elem[0].files[0].size;
+//                    var ext = value.substring(value.lastIndexOf('.') + 1).toLowerCase(); 
+//                    if(!ngModel.$viewValue){
+//                        return  false;
+//                    }
+//                    else if(validFormats.indexOf(ext) == -1){     
+//                     console.log('ext');           
+//                         scope.userForm.file.$error.extension = true;
+//                         scope.$apply();
+//                         return  false;
+//                    } else if(size > validSize){ 
+//                         delete scope.userForm.file.$error.extension;
+//                         scope.userForm.file.$error.validsize = true;
+//                         scope.$apply();
+//                         return  false;
+//                    }else{ 
+//                         ngModel.$setViewValue(elem[0].files[0].name);
+//                         ngModel.$render();
+//                         scope.userForm.file.$error.validsize = false;
+//                         scope.userForm.file.$error.extension = false;
+//                         delete scope.userForm.file.$error.validsize;
+//                         delete scope.userForm.file.$error.extension;
+//                         scope.userForm.file.$valid = true;
+//                         scope.userForm.file.$invalid = false;
+//                         scope.$apply();
+//                         return true;
+//                    }
+//                })
+//            }
+//        }
+
+//     };
+//  });
 
 //  myApp.directive('validsize', function (){ 
 //     var validSize = 300000;

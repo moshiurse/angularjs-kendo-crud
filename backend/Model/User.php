@@ -32,16 +32,16 @@ class User {
             address = :address,
             email = :email,
             username = :username,
-            password = :password';
-// image = :image
+            password = :password,
+            image = :image';
         $stmt = $this->con->prepare($query);
         // cleaning data
-        $this->name = $this->name;
-        $this->mobile = $this->mobile;
-        $this->address = $this->address;
-        $this->email = $this->email;
-        $this->username = $this->username;
-        $this->password = $this->password;
+        // $this->name = $this->name;
+        // $this->mobile = $this->mobile;
+        // $this->address = $this->address;
+        // $this->email = $this->email;
+        // $this->username = $this->username;
+        // $this->password = $this->password;
         // $this->image = $this->image;
 
         $stmt->bindParam(':name', $this->name);
@@ -50,7 +50,7 @@ class User {
         $stmt->bindParam(':email', $this->email);
         $stmt->bindParam(':username', $this->username);
         $stmt->bindParam(':password', $this->password);
-        // $stmt->bindParam(':image', $this->image);
+        $stmt->bindParam(':image', $this->image);
 
         if($stmt->execute()){
             return true;
